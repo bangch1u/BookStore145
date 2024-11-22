@@ -44,26 +44,27 @@ namespace BookApi.Controllers
             }
             return NotFound();
         }
-        //[HttpGet("{id}")]
-        //public IActionResult getBook([FromRoute] Guid id)
-        //{
-        //    var book = _service.getById(id);
-        //    if (book != null)
-        //    {
-        //        //return Ok(new BookDto()
-        //        //{
-        //        //    BookId = book.BookId,
-        //        //    BookName = book.BookName,
-        //        //    BookPrices = book.BookPrices,
-        //        //    ImgFile = book.ImgFile != null ? $"{Request.Scheme}://{Request.Host}/Uploads/{book.ImgFile}" : "N/A",
-        //        //    AuthorNames = book.Authors != null && book.Authors.Count > 0 ? book.Authors.Select(a => a.AuthorName).ToList() : NA,
-        //        //    PublicationYear = book.PublicationYear,
-        //        //    Genres = book.Genres != null && book.Genres.Count > 0 ? book.Genres.Select(g => g.GenreName).ToList() : NA,
-        //        //});
-
-        //    }
-        //    return NotFound();
-        //}
+        [HttpGet("{id}")]
+        public IActionResult getBook([FromRoute] Guid id)
+        {
+            var book = _service.getById(id);
+            if (book != null)
+            {
+                return Ok(new BookVM()
+                {
+                    BookId = book.BookId,
+                    BookName = book.BookTitle,
+                    BookPrices = book.Price,
+                    Stock = book.StockQuantity,
+                    UrlImage = book.CoverImage != null ? $"{Request.Scheme}://{Request.Host}/Uploads/{book.CoverImage}" : "N/A",
+                    AuthorNames = book.Authors != null && book.Authors.Count > 0 ? book.Authors.Select(a => a.AuthorName).ToList() : NA,
+                    PublicationYear = book.PublicationYear,
+                    Genres = book.Genres != null && book.Genres.Count > 0 ? book.Genres.Select(g => g.GenreName).ToList() : NA,
+                });
+                 
+            }
+            return NotFound();
+        }
         [HttpPost]
         public IActionResult createBook([FromForm]BookDto bookdto)
         {

@@ -1,0 +1,166 @@
+﻿@page "/book/update/{BookId:guid}"
+@using BookBlazorWasmAdmin.Services
+@using BookData.Data.Entities
+@using BookData.Request.BookRequest
+@using BookData.ViewModels
+@using Microsoft.AspNetCore.Components.Forms
+<h3>Cập nhập sách</h3>
+
+@if (BookVM == null)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <EditForm class="row" Model="BookVM" enctype="multipart/form-data">
+        <div class="col-6">
+            <div class="row">
+                <div class="mb-3 col-6">
+                    <label for="Name" class="form-label">Tên Sách</label>
+                    <InputText class="form-control" @bind-Value="BookVM.BookName" />
+                </div>
+                <div class="mb-3 col-6">
+                    <label for="BookPrices" class="form-label">Giá</label>
+                    <InputNumber class="form-control" @bind-Value="BookVM.BookPrices" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="mb-3 col-6">
+                    <label for="Stock" class="form-label">Số Lượng</label>
+                    <InputNumber class="form-control" @bind-Value="BookVM.Stock" />
+                </div>
+                <div class="mb-3 col-6">
+                    <label for="PublicationYear" class="form-label">Ngày Xuất Bản</label>
+                    <InputDate class="form-control" @bind-Value="BookVM.PublicationYear" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
+           
+
+           <div class="row mt-2">
+                <!-- Dropdown chọn Tác Giả -->
+                <div class="col-6 mb-3 position-relative">
+                    <label for="author-select">Tác Giả</label>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" @onclick="ToggleDropdown1">
+                            @selectedAuthorsDisplay
+                        </button>
+                        <div class="dropdown-menu show" style="display:@(isDropdownOpen1 ? "block" : "none"); max-height: 200px; overflow-y: auto;">
+                            @if (Authors == null)
+                            {
+                                <label>Loading...</label>
+                            }
+                            else
+                            {
+                                @foreach (var item in Authors)
+                                {
+                                    <div class="dropdown-item" @onclick="() => ToggleAuthor(item.AuthorId)">
+                                        <input type="checkbox" checked="@Book.AuthorIds.Contains(item.AuthorId)" />
+                                        <span class="ms-2">@item.AuthorName</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 mb-3 position-relative">
+                    <label for="author-select">Thể Loại</label>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" @onclick="ToggleDropdown2">
+                            @selectedGenresDisplay
+                        </button>
+                        <div class="dropdown-menu @(isDropdownOpen2 ? "show" : "")"
+                             style="max-height: 200px; overflow-y: auto;">
+                            @if (Genres == null)
+                            {
+                                <label>Loading...</label>
+                            }
+                            else
+                            {
+                                @foreach (var item in Genres)
+                                {
+                                    <div class="dropdown-item" @onclick="() => ToggleGenre(item.Id)">
+                                        <input type="checkbox" checked="@Book.GenreIds.Contains(item.Id)" />
+                                        <span class="ms-2">@item.GenreName</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+           </div>
+
+            <div class="row">
+             
+                
+            </div>
+        </div>
+@* 
+        <label class="col-2 mx-0">Thể Loại: </label>
+        @foreach (var item in BookVM.Genres)
+        {
+            <p class="col-2 p-0 mx-0">@item |</p>
+        } *@
+       @*  <div class="row">
+            <label class="col-2 mx-0">Tác Giả: </label>
+            @foreach (var item in BookVM.AuthorNames)
+            {
+                <p class="col-2 p-0 mx-0">@item |</p>
+            }
+        </div> *@
+
+        <button type="submit" class="col-2 btn btn-primary">Cập nhập Sách</button>
+    </EditForm>
+}
+
+@inject IBookApiClient bookApiClient;
+@inject IAuthorApiClient authorApiClient;
+@inject IGenreApiClient genreApiClient;
+
+@code {
+    public BookVM BookVM { get; set; }
+    [Parameter] public Guid BookId { get; set; }
+    private List<Author> Authors { get; set; }
+    private List<Genre> Genres { get; set; }
+    private BookCreateRequest Book { get; set; } = new BookCreateRequest
+        {
+            AuthorIds = new List<Guid>(),
+            GenreIds = new List<Guid>()
+        };
+
+    private bool isDropdownOpen1 = false;
+    private bool isDropdownOpen2 = false;
+    private string selectedAuthorsDisplay => Book.AuthorIds.Count == 0 ? "Chọn Tác giả"
+        : string.Join(", ", Authors.Where(a => Book.AuthorIds.Contains(a.AuthorId)).Select(a => a.AuthorName));
+    private string selectedGenresDisplay => Book.GenreIds.Count == 0 ? "Chọn Thể loại"
+        : string.Join(", ", Genres.Where(g => Book.GenreIds.Contains(g.Id)).Select(g => g.GenreName));
+
+    protected async override Task OnInitializedAsync()
+    {
+        BookVM = await bookApiClient.GetBook(BookId);
+        Authors = await authorApiClient.GetAllAuthor();
+        Genres = await genreApiClient.GetAllGenre();
+    }
+
+    private void ToggleDropdown1() => isDropdownOpen1 = !isDropdownOpen1;
+    private void ToggleDropdown2() => isDropdownOpen2 = !isDropdownOpen2;
+
+    private void ToggleAuthor(Guid authorId)
+    {
+        if (Book.AuthorIds.Contains(authorId))
+            Book.AuthorIds.Remove(authorId);
+        else
+            Book.AuthorIds.Add(authorId);
+    }
+
+    private void ToggleGenre(Guid genreId)
+    {
+        if (Book.GenreIds.Contains(genreId))
+            Book.GenreIds.Remove(genreId);
+        else
+            Book.GenreIds.Add(genreId);
+    }
+}

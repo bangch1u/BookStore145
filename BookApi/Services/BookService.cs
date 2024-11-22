@@ -86,6 +86,7 @@ namespace BookApi.Services
                 bookNow.BookTitle = book.BookName;
                 bookNow.Price = book.BookPrices;
                 bookNow.CoverImage = book.urlImg;
+                bookNow.StockQuantity = book.Stock;
                 List<Author> listAuthor = new List<Author>();
                 foreach (Guid idAuthor in book.AuthorIds)
                 {

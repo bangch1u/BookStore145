@@ -36,6 +36,7 @@ else
                         <td>@string.Join(", ", item.Genres)</td>
                         <td>
                             <a class="btn btn-info " href="/bookDetail/@item.BookId"><i class="bi bi-info-square-fill"></i></a>
+                            <a class="btn btn-warning" href="/book/update/@item.BookId">Update</a>
                             <button class="btn btn-danger" @onclick="() => RemoveBook(item.BookId)"><i class="bi bi-trash-fill"></i></button>
                         </td>
                     </tr>

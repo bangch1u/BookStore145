@@ -1,0 +1,49 @@
+﻿@page "/bookDetail/{BookId:guid}";
+@using BookBlazorWasmAdmin.Services
+@using BookData.ViewModels
+
+<h3>BookDetails</h3>
+
+@inject IBookApiClient BookApiClient;
+@code {
+    public BookVM BookVM { get; set; }
+    [Parameter]public Guid BookId { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        BookVM = await BookApiClient.GetBook(BookId);
+    }
+
+}
+@if(BookVM == null)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <h3>Book @BookVM.BookName</h3>
+    <table class="table">
+        <tr>
+            <td>@BookVM.BookId</td>
+        </tr>
+        <tr>
+            <td>
+                <div class="card" style="width: 8rem; height: 15rem; background-color: transparent; border: none;">
+                    @if (BookVM.UrlImage != "string" && !string.IsNullOrEmpty(BookVM.UrlImage))
+                    {
+                        <img src="@BookVM.UrlImage" style="height:170px" class="card-img-top" alt="@BookVM.BookName">
+                    }
+                    else
+                    {
+                        <img src="path-to-default-image.jpg" class="card-img-top" alt="No image available">
+                    }
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                PRICE: @BookVM.BookPrices
+            </td>
+        </tr>
+    </table>
+}
+
