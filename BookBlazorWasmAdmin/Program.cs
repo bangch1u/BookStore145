@@ -2,6 +2,7 @@ using BookBlazorWasmAdmin;
 using BookBlazorWasmAdmin.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -11,4 +12,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddScoped<IBookApiClient, BookApiClient>();  
 builder.Services.AddScoped<IAuthorApiClient, AuthorApiClient>();
 builder.Services.AddScoped<IGenreApiClient, GenreApiClient>();
+
+builder.Services.AddMudServices();
 await builder.Build().RunAsync();
