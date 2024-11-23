@@ -3,8 +3,8 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <MudNavMenu class="flex-column">
 
-        <div class="nav-item px-3">
-            <MudNavLink  class="nav-link" href="counter">
+        <div class=" nav-item px-3">
+            <MudNavLink  class="nav-link " href="counter">
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
             </MudNavLink>
         </div>
@@ -12,6 +12,26 @@
          <div class="nav-item px-3">
             <MudNavLink class="nav-link" href="/book/list">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Book
+            </MudNavLink>
+        </div>
+        <div class="nav-item px-3">
+            <MudNavLink class="nav-link" href="#">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Author
+            </MudNavLink>
+        </div>
+        <div class="nav-item px-3">
+            <MudNavLink class="nav-link" href="#">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Genre
+            </MudNavLink>
+        </div>
+        <div class="nav-item px-3">
+            <MudNavLink class="nav-link" href="#">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Order
+            </MudNavLink>
+        </div>
+        <div class="nav-item px-3">
+            <MudNavLink class="nav-link" href="#">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Account
             </MudNavLink>
         </div>
     </MudNavMenu>
@@ -27,3 +47,8 @@
         collapseNavMenu = !collapseNavMenu;
     }
 }
+<style>
+    .nav-link {
+        background-color: mediumpurple;
+    }
+</style>

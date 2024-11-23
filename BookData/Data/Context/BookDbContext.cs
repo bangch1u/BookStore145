@@ -27,11 +27,11 @@ namespace BookData.Data.Context
         //public DbSet<Publisher> Publisher { get; set; }
 
         // Phương thức OnConfiguring để cấu hình chuỗi kết nối
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            // Đảm bảo chuỗi kết nối đúng
-            optionsBuilder.UseSqlServer("Data Source=BANGCH1U\\SQLEXPRESS;Initial Catalog=BookShop;Integrated Security=True;Trust Server Certificate=True");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    // Đảm bảo chuỗi kết nối đúng
+        //    optionsBuilder.UseSqlServer("Data Source=BANGCH1U\\SQLEXPRESS;Initial Catalog=BookShop;Integrated Security=True;Trust Server Certificate=True");
+        //}
 
         // Phương thức cấu hình các thực thể và các quan hệ giữa chúng
         protected override void OnModelCreating(ModelBuilder modelBuilder)

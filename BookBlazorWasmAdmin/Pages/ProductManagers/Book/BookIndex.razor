@@ -10,32 +10,32 @@
     }
     else
     {
-        <div class="row">
+        <div class="row ms-5">
             <table class="table">
-                <thead>
-                    <tr>
-                        <th>BookId</th>
-                        <th>BookName</th>
-                        <th>Price</th>
-                        <th>Public</th>
-                        <th>Image</th>
-                        <th>Author</th>
-                        <th>Genre</th>
-                        <th></th>
+                <thead >
+                    <tr class="row">
+                        <th class="col-1">BookId</th>
+                        <th class="col-2">BookName</th>
+                        <th class="col-1">Price</th>
+                        <th class="col-2">PublicationYear</th>
+                        <th class="col-1">Image</th>
+                        <th class="col-1">Author</th>
+                        <th class="col-1">Genre</th>
+                        <th class="col-3"></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Books)
                     {
-                        <tr>
-                            <td>@item.BookId</td>
-                            <td>@item.BookName</td>
-                            <td>@item.BookPrices</td>
-                            <td>@item.PublicationYear</td>
-                            <td><img style="height:100px; width:60px" src="@item.UrlImage" alt="Alternate Text" /></td>
-                            <td>@string.Join(", ", item.AuthorNames)</td>
-                            <td>@string.Join(", ", item.Genres)</td>
-                            <td>
+                        <tr class="row">
+                            <td class="col-1">@item.BookId</td>
+                            <td class="col-2">@item.BookName</td>
+                            <td class="col-1">@item.BookPrices</td>
+                            <td class="col-2">@item.PublicationYear</td>
+                            <td class="col-1"><img style="height:100px; width:60px" src="@item.UrlImage" alt="Alternate Text" /></td>
+                            <td class="col-1">@string.Join(", ", item.AuthorNames)</td>
+                            <td class="col-1">@string.Join(", ", item.Genres)</td>
+                            <td class="col-3">
                                 <a class="btn btn-info " href="/bookDetail/@item.BookId"><i class="bi bi-info-square-fill"></i></a>
                                 <a class="btn btn-warning" href="/book/update/@item.BookId">Update</a>
                                 <button class="btn btn-danger" @onclick="() => RemoveBook(item.BookId)"><i class="bi bi-trash-fill"></i></button>
