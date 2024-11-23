@@ -1,0 +1,28 @@
+﻿@page "/author/create"
+<h3>AuthorCreate</h3>
+
+<form>
+    <div class="mb-3">
+        <label for="idAuthor" class="form-label">AuthorId</label>
+        <input type="text" class="form-control" id="idAuthor" required>
+    </div>
+    <div class="mb-3">
+        <label for="nameAuthor" class="form-label">AuthorName</label>
+        <input type="text" class="form-control" id="nameAuthor" required>
+    </div>
+    <div class="mb-3">
+        <label for="birth" class="form-label">Birth	</label>
+        <input type="number" class="form-control" id="birth" required>
+    </div>
+    <div class="mb-3">
+        <label for="imageAuthor" class="form-label">Author Image</label>
+        <input type="file" class="form-control" id="imageAuthor" accept="image/*" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Desciption</label>
+        <input type="text" class="form-control" id="description">
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
