@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApi", "BookApi\BookApi.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookBlazorWasmAdmin", "BookBlazorWasmAdmin\BookBlazorWasmAdmin.csproj", "{994A0409-C99D-4886-ABE0-03948F100BD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookBlazorWasmCustomer", "BookBlazorWasmCustomer\BookBlazorWasmCustomer.csproj", "{72B9F2BC-B9AD-4AF7-82F0-7497BBAB59F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookBlazorWasmCustomer", "BookBlazorWasmCustomer\BookBlazorWasmCustomer.csproj", "{72B9F2BC-B9AD-4AF7-82F0-7497BBAB59F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
