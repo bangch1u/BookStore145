@@ -1,18 +1,37 @@
 ﻿@page "/genre/create"
+@using BookBlazorWasmAdmin.Services
+@using BookData.Data.Entities
+@inject IGenreApiClient _genreApiClient;
+@inject NavigationManager nav;
 <h3>GenreCreate</h3>
 
-<form>
-    <div class="mb-3">
-        <label for="IDGenre" class="form-label">Id</label>
-        <input type="text" class="form-control" id="IDGenre" required>
-    </div>
-    <div class="mb-3">
-        <label for="nameGenre" class="form-label">GenreName</label>
-        <input type="text" class="form-control" id="nameGenre" required>
-    </div>
-    <div class="mb-3">
-        <label for="ageLimit" class="form-label">AgeLimit	</label>
-        <input type="number" class="form-control" id="ageLimit" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<EditForm Model="@GenreNew" OnValidSubmit="@OnValidSubmit">
+    <MudCard>
+         <MudCardContent>
+            <MudTextField Label="Tên Thể Loại" @bind-Value="GenreNew.GenreName"></MudTextField>
+            <MudTextField Label="Giới hạn độ tuổi" @bind-Value="GenreNew.AgeLimit"></MudTextField>
+         </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" Class="ml-auto">Submit</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
+
+@code{
+    public Genre GenreNew = new();
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        GenreNew.Id = Guid.NewGuid();
+        var result = await _genreApiClient.CreateGenre(GenreNew);
+        if (result)
+        {
+            nav.NavigateTo("/genre/index");
+        }
+        else
+        {
+            Console.WriteLine("Fail!");
+        }
+        StateHasChanged();
+    }
+}

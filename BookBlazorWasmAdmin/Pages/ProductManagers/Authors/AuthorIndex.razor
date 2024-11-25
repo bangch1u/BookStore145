@@ -1,74 +1,71 @@
 ﻿@page "/author/index"
-<h3>Trang chủ tác </h3>
-<a href="/author/create" class="btn btn-success">Create Author</a>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">AuthorId</th>
-            <th scope="col">AuthorName</th>
-            <th scope="col">Birth</th>
-            <th scope="col">AuthorImage</th>
-            <th scope="col">Desciption</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>TG01</td>
-            <td>Kenny Huong</td>
-            <td>2003</td>
-            <td><img src="https://i.pinimg.com/736x/6e/34/14/6e34147bf703623ff0c2650b7ce06651.jpg" class="img-fluid" alt="..." style="height:40px; width:60px; border-radius:10px"</td>
-            <td>Hay quên, phóng thoáng, thích ngủ </td>
-            <td><a href="/author/detail" class="btn btn-info">Detail</a></td>
-            <td><a href="/author/delete" class="btn btn-danger">Delete</a></td>
-            
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>TG02</td>
-            <td>Chill Bang</td>
-            <td>2003</td>
-            <td><img src="https://th.bing.com/th/id/R.949e203cbd58faba5dc94e6a2581909a?rik=ohUZQjr5Q%2bNpBA&pid=ImgRaw&r=0" class="img-fluid" alt="..." style="height:40px; width:60px; border-radius:10px"</td>
-            <td>Yêu nước, thương dân, hào phóng</td>
-            <td><a href="/author/detail" class="btn btn-info">Detail</a></td>
-            <td><a href="/author/delete" class="btn btn-danger">Delete</a></td>
+@using BookBlazorWasmAdmin.Services
+@using BookData.Data.Entities
+@inject IAuthorApiClient authorApiClient;
+@inject NavigationManager nav;
+@code {
+    public List<Author> Authors;
+    protected override async Task OnInitializedAsync()
+    {
+        Authors = await authorApiClient.GetAllAuthor();
+    }
 
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>TG03</td>
-            <td>Dat Dut</td>
-            <td>2003</td>
-            <td><img src="https://i0.wp.com/thatnhucuocsong.com.vn/wp-content/uploads/2022/04/Anh-avatar-dep-anh-dai-dien-FB-Tiktok-Zalo.jpg?ssl=1" class="img-fluid" alt="..." style="height:40px; width:60px; border-radius:10px"</td>
-            <td>Siêng ăn, nhác làm được cái yêu thương bố mẹ</td>
-            <td><a href="/author/detail" class="btn btn-info">Detail</a></td>
-            <td><a href="/author/delete" class="btn btn-danger">Delete</a></td>
+    public async Task OnDeleteClick(Guid id)
+    {
+        var result =await authorApiClient.DeleteAuthor(id);
+        if (result)
+        {
+            Authors = await authorApiClient.GetAllAuthor();
+        }
+        else
+        {
+            Console.WriteLine("Fail");
+        }
+    }
+}
 
-        </tr>
-        <tr>
-            <th scope="row">4</th>
-            <td>TG04</td>
-            <td>Quyet Ace</td>
-            <td>2003</td>
-            <td><img src="https://scontent.fhan15-2.fna.fbcdn.net/v/t39.30808-6/373012147_1048646899454759_8909049096100321529_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeF59_uyhs6nlnwUEvEQkBahl_FqdkJag8qX8Wp2QlqDyielJslKRIY9KMDhL8vkbAbn2fh5861PrzxmesKPyusb&_nc_ohc=h58Lb--2ljIQ7kNvgG35wHV&_nc_zt=23&_nc_ht=scontent.fhan15-2.fna&_nc_gid=Ahse_wcXqapW0HOHwyVGXMJ&oh=00_AYD6xrZLd1OrC7Xi_5PbckjabDRjwsIzFoI7qoNJoYQi6Q&oe=6747BE50" class="img-fluid" alt="..." style="height:40px; width:60px; border-radius:10px"</td>
-            <td>To cao, thể chất khỏe, thích phụ nữ</td>
-            <td><a href="/author/detail" class="btn btn-info">Detail</a></td>
-            <td><a href="/author/delete" class="btn btn-danger">Delete</a></td>
+<div class="container ms-5 mt-5">
+    <h3>Trang chủ tác </h3>
+    <a href="/author/create" class="btn btn-success">Create Author</a>
+    <table class="table">
+        <thead>
+            <tr class="row">
+                <th class="col-1">AuthorId</th>
+                <th class="col-2">AuthorName</th>
+                <th class="col-2">Birth</th>
+                <th class="col-2">AuthorImage</th>
+                <th class="col-3">Desciption</th>
+                <th class="col-1"></th>
+                <th class="col-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Authors == null)
+            {
+                <div>Loading...</div>
+            }
+            else
+            {
+                @foreach (var item in Authors)
+                {
+                    <tr class="row">
+                        <td class="col-1">@item.AuthorId</td>
+                        <td class="col-2">@item.AuthorName</td>
+                        <td class="col-2">@item.Birth</td>
+                        <td class="col-2"><img src="@item.AuthorImage" style="height:100px; width:70px" alt="@item.AuthorName"/></td>
+                        <td class="col-3">@item.Desciption</td>
+                        <td class="col-1"><a href="/author/detail" class="btn btn-info">Detail</a></td>
+                        <td class="col-1"><button @onclick="()=> OnDeleteClick(item.AuthorId)" class="btn btn-danger">Delete</button></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
 
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>TG03</td>
-            <td>Dat Dut</td>
-            <td>2003</td>
-            <td><img src="https://i.pinimg.com/enabled_lo_mid/236x/12/20/05/12200579b5389850dbfe2990fd906722.jpg" class="img-fluid" alt="..." style="height:40px; width:60px; border-radius:10px"</td>
-            <td>Siêng ăn, nhác làm được cái yêu thương bố mẹ</td>
-            <td><a href="/author/detail" class="btn btn-info">Detail</a></td>
-            <td><a href="/author/delete" class="btn btn-danger">Delete</a></td>
 
-        </tr>
-    </tbody>
-</table>
+
+
+
+
+

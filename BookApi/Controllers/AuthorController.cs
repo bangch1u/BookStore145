@@ -1,7 +1,9 @@
 ﻿using BookApi.Services;
 using BookData.Data.Entities;
+using BookData.DataTransferObjects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace BookApi.Controllers
 {
@@ -10,16 +12,26 @@ namespace BookApi.Controllers
     public class AuthorController : ControllerBase
     {
         private readonly IAuthorService _service;
-        public AuthorController(IAuthorService service)
+        private readonly IWebHostEnvironment _evn;
+        public AuthorController(IAuthorService service, IWebHostEnvironment evn)
         {
             _service = service;
+            _evn = evn;
         }
         [HttpGet]
         public IActionResult getAllAuthors()
         {
             var lstAuthor = _service.getAll();
+           
             if (lstAuthor != null)
             {
+                foreach (var author in lstAuthor)
+                {
+                    if (author.AuthorImage != null)
+                    {
+                        author.AuthorImage = $"{Request.Scheme}://{Request.Host}/AuthorImg/{author.AuthorImage}";
+                    }
+                }
                 return Ok(lstAuthor);
             }
             return NotFound();
@@ -35,8 +47,39 @@ namespace BookApi.Controllers
             return NotFound();
         }
         [HttpPost]
-        public IActionResult createAuthor(Author author)
+        public IActionResult createAuthor([FromForm]AuthorDto authorDto)
         {
+            var untrustedFIleName = authorDto.AuthorImgFile.FileName;
+            string AuthorImgFolder = Path.Combine(_evn.WebRootPath, "AuthorImg");
+
+            if (!Directory.Exists(AuthorImgFolder))
+            {
+                Directory.CreateDirectory(AuthorImgFolder); 
+            }
+            var trustedFileNameForDisplay = WebUtility.HtmlDecode(untrustedFIleName);
+            string trustedFileNameForFileStorage = Path.GetRandomFileName();
+            if(authorDto.AuthorImgFile != null && authorDto.AuthorImgFile.Length > 0)
+            {
+                var fileExtension = Path.GetExtension(authorDto.AuthorImgFile.FileName);
+
+                trustedFileNameForFileStorage = Path.ChangeExtension(Path.GetRandomFileName(), fileExtension);
+
+                string newFilePath = Path.Combine(AuthorImgFolder, trustedFileNameForFileStorage);
+                using(FileStream fs = new(newFilePath, FileMode.Create))
+                {
+                    authorDto.AuthorImgFile.CopyTo(fs);
+                }  
+
+            }
+            Author author = new ()
+            {
+                AuthorId = Guid.NewGuid(),
+                AuthorName = authorDto.AuthorName,
+                Birth = authorDto.Birth,
+                Desciption = authorDto.Desciption,
+                AuthorImage = trustedFileNameForFileStorage,
+            };
+            
             var status = _service.createAuthor(author);
             if (status)
             {

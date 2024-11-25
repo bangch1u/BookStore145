@@ -1,4 +1,7 @@
 ﻿@page "/genre/index"
+@using BookBlazorWasmAdmin.Services
+@using BookData.Data.Entities
+@inject IGenreApiClient _genreApiClient;
 <h3>GenreIndex</h3>
 
 <a href="/genre/create" class="btn btn-primary">Create</a>
@@ -14,45 +17,39 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>TL01</td>
-            <td>Cổ tích</td>
-            <td>2</td>
-            <td><a href="/genre/detail" class="btn btn-info">Detail</a> </td>
-            <td><a href="/genre/delete" class="btn btn-danger">Delete</a></td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>TL02</td>
-            <td>Khoa học viễn tưởng</td>
-            <td>14</td>
-            <td><a href="/genre/detail" class="btn btn-info">Detail</a> </td>
-            <td><a href="/genre/delete" class="btn btn-danger">Delete</a></td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>TL03</td>
-            <td>Kinh doanh</td>
-            <td>20</td>
-            <td><a href="/genre/detail" class="btn btn-info">Detail</a> </td>
-            <td><a href="/genre/delete" class="btn btn-danger">Delete</a></td>
-        </tr>
-        <tr>
-            <th scope="row">4</th>
-            <td>TL04</td>
-            <td>Cơm áo gạo tiền</td>
-            <td>30</td>
-            <td><a href="/genre/detail" class="btn btn-info">Detail</a> </td>
-            <td><a href="/genre/delete" class="btn btn-danger">Delete</a></td>
-        </tr>
-        <tr>
-            <th scope="row">5</th>
-            <td>TL05</td>
-            <td>Làm quen với đất</td>
-            <td>60</td>
-            <td><a href="/genre/detail" class="btn btn-info">Detail</a> </td>
-            <td><a href="/genre/delete" class="btn btn-danger">Delete</a></td>
-        </tr>
+        @if(Genres == null)
+        {
+            <div>Loading....</div>
+        }
+        else
+        {
+            @foreach (var item in Genres)
+            {
+                <tr>
+                    <th scope="row"></th>
+                    <td>@item.Id</td>
+                    <td>@item.GenreName</td>
+                    <td>@item.AgeLimit</td>
+                    <td><a href="/genre/detail" class="btn btn-info">Detail</a> </td>
+                    <td><button @onclick="() => OnDeletedClicked(item.Id)" class="btn btn-danger">Delete</button></td>
+                </tr>
+            }
+        }
+       
     </tbody>
 </table>
+@code{
+    public int index = 0;
+    public List<Genre> Genres;
+    protected override async Task OnInitializedAsync()
+    {
+        Genres = await _genreApiClient.GetAllGenre();
+    }
+    public async Task OnDeletedClicked(Guid id)
+    {
+        var result = await _genreApiClient.DeleteGenre(id);
+        if(result) Console.WriteLine("Remove Success");
+        else Console.WriteLine("Remove Fail!");
+        Genres = await _genreApiClient.GetAllGenre();
+    }
+}
