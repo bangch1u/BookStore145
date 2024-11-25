@@ -1,0 +1,71 @@
+﻿@page "/author/index"
+@using BookBlazorWasmAdmin.Services
+@using BookData.Data.Entities
+@inject IAuthorApiClient authorApiClient;
+@inject NavigationManager nav;
+@code {
+    public List<Author> Authors;
+    protected override async Task OnInitializedAsync()
+    {
+        Authors = await authorApiClient.GetAllAuthor();
+    }
+
+    public async Task OnDeleteClick(Guid id)
+    {
+        var result =await authorApiClient.DeleteAuthor(id);
+        if (result)
+        {
+            Authors = await authorApiClient.GetAllAuthor();
+        }
+        else
+        {
+            Console.WriteLine("Fail");
+        }
+    }
+}
+
+<div class="container ms-5 mt-5">
+    <h3>Trang chủ tác </h3>
+    <a href="/author/create" class="btn btn-success">Create Author</a>
+    <table class="table">
+        <thead>
+            <tr class="row">
+                <th class="col-1">AuthorId</th>
+                <th class="col-2">AuthorName</th>
+                <th class="col-2">Birth</th>
+                <th class="col-2">AuthorImage</th>
+                <th class="col-3">Desciption</th>
+                <th class="col-1"></th>
+                <th class="col-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Authors == null)
+            {
+                <div>Loading...</div>
+            }
+            else
+            {
+                @foreach (var item in Authors)
+                {
+                    <tr class="row">
+                        <td class="col-1">@item.AuthorId</td>
+                        <td class="col-2">@item.AuthorName</td>
+                        <td class="col-2">@item.Birth</td>
+                        <td class="col-2"><img src="@item.AuthorImage" style="height:100px; width:70px" alt="@item.AuthorName"/></td>
+                        <td class="col-3">@item.Desciption</td>
+                        <td class="col-1"><a href="/author/detail" class="btn btn-info">Detail</a></td>
+                        <td class="col-1"><button @onclick="()=> OnDeleteClick(item.AuthorId)" class="btn btn-danger">Delete</button></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+

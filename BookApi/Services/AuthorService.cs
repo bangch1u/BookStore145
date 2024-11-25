@@ -1,4 +1,5 @@
-﻿using BookData.Data.Entities;
+﻿using Azure.Core;
+using BookData.Data.Entities;
 using BookData.Repositories;
 using BookData.Repositories.CommonRepos;
 
@@ -36,7 +37,10 @@ namespace BookApi.Services
 
         public List<Author> getAll()
         {
+
             return _authorReadRepos.getAll();
+           
+           
         }
 
         public Author getById(Guid id)

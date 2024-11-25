@@ -1,0 +1,55 @@
+﻿@page "/genre/index"
+@using BookBlazorWasmAdmin.Services
+@using BookData.Data.Entities
+@inject IGenreApiClient _genreApiClient;
+<h3>GenreIndex</h3>
+
+<a href="/genre/create" class="btn btn-primary">Create</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Id</th>
+            <th scope="col">GenreName </th>
+            <th scope="col">AgeLimit</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Genres == null)
+        {
+            <div>Loading....</div>
+        }
+        else
+        {
+            @foreach (var item in Genres)
+            {
+                <tr>
+                    <th scope="row"></th>
+                    <td>@item.Id</td>
+                    <td>@item.GenreName</td>
+                    <td>@item.AgeLimit</td>
+                    <td><a href="/genre/detail" class="btn btn-info">Detail</a> </td>
+                    <td><button @onclick="() => OnDeletedClicked(item.Id)" class="btn btn-danger">Delete</button></td>
+                </tr>
+            }
+        }
+       
+    </tbody>
+</table>
+@code{
+    public int index = 0;
+    public List<Genre> Genres;
+    protected override async Task OnInitializedAsync()
+    {
+        Genres = await _genreApiClient.GetAllGenre();
+    }
+    public async Task OnDeletedClicked(Guid id)
+    {
+        var result = await _genreApiClient.DeleteGenre(id);
+        if(result) Console.WriteLine("Remove Success");
+        else Console.WriteLine("Remove Fail!");
+        Genres = await _genreApiClient.GetAllGenre();
+    }
+}
