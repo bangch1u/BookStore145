@@ -17,4 +17,8 @@
     <ProjectReference Include="..\BookData\BookData.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\ProductManagers\Genres\" />
+  </ItemGroup>
+
 </Project>
