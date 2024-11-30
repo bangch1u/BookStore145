@@ -2,6 +2,7 @@
 using BookData.DataTransferObjects;
 using BookData.Repositories;
 using BookData.Repositories.CommonRepos;
+using System.Net;
 
 namespace BookApi.Services
 {
@@ -11,15 +12,18 @@ namespace BookApi.Services
         private readonly IBookRepos _bookReadRepos;
         private readonly IAuthorRepos _authorRepos;
         private readonly IGenreRepos _genreRepos;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         public BookService(IGenericRepository<Book> bookCUDRepos,
             IBookRepos bookReadRepos,
             IAuthorRepos authorRepos,
-            IGenreRepos genreRepos)
+            IGenreRepos genreRepos,
+            IWebHostEnvironment webHostEnvironment)
         {
             _bookCUDRepos = bookCUDRepos;
             _bookReadRepos = bookReadRepos;
             _authorRepos = authorRepos;
             _genreRepos = genreRepos;   
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public bool createBook(BookDto book)
@@ -61,6 +65,15 @@ namespace BookApi.Services
             var book = _bookReadRepos.getById(id);
             if (book != null)
             {
+                if(book.CoverImage != null)
+                {
+                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads", book.CoverImage);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                }
+               
                 _bookCUDRepos.Delete(book);
                 _bookCUDRepos.Save();
                 return true;
@@ -80,29 +93,66 @@ namespace BookApi.Services
 
         public bool updateBook(Guid id, BookDto book )
         {
+            string trustedFileNameForFileStorage = null;
+            if (book.ImgFile != null &&  book.ImgFile.Length > 0)
+            {
+                var unstrestedFileName = book.ImgFile.FileName;
+                var trustedFileNameForDisplay  = WebUtility.HtmlEncode(unstrestedFileName);
+                trustedFileNameForFileStorage = Path.GetRandomFileName();
+                var fileExtension = Path.GetExtension(unstrestedFileName);
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads");
+                // Tạo thư mục nếu chưa tồn tại
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                string newFilePath = Path.Combine(uploadsFolder, trustedFileNameForFileStorage);
+                using(FileStream fs = new(newFilePath, FileMode.Create))
+                {
+                    book.ImgFile.CopyTo(fs);
+                }
+            }
+
+
             var bookNow = _bookReadRepos.getById(id);
             if (bookNow != null)
             {
-                bookNow.BookTitle = book.BookName;
-                bookNow.Price = book.BookPrices;
-                bookNow.CoverImage = book.urlImg;
-                bookNow.StockQuantity = book.Stock;
-                List<Author> listAuthor = new List<Author>();
-                foreach (Guid idAuthor in book.AuthorIds)
+                if (bookNow.CoverImage != null)
                 {
-                    var author = _authorRepos.getById(idAuthor);
-                    if (author != null)
+                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads", bookNow.CoverImage);
+                    if (File.Exists(filePath))
                     {
-                        listAuthor.Add(author);
+                        File.Delete(filePath);
                     }
                 }
-                List<Genre> listGenre = new List<Genre>();
-                foreach (Guid idGenre in book.GenreIds)
+                bookNow.BookTitle = book.BookName;
+                bookNow.Price = book.BookPrices;
+                bookNow.CoverImage = !string.IsNullOrEmpty(trustedFileNameForFileStorage) ? trustedFileNameForFileStorage : null ;
+                bookNow.StockQuantity = book.Stock;
+                List<Author> listAuthor = new List<Author>();
+                if(book.AuthorIds != null)
                 {
-                    var genre = _genreRepos.GetById(idGenre);
-                    if (genre != null)
+
+                    foreach (Guid idAuthor in book.AuthorIds)
                     {
-                        listGenre.Add(genre);
+                        var author = _authorRepos.getById(idAuthor);
+                        if (author != null)
+                        {
+                            listAuthor.Add(author);
+                        }
+                    }
+                }
+               
+                List<Genre> listGenre = new List<Genre>();
+                if( book.GenreIds != null)
+                {
+                    foreach (Guid idGenre in book.GenreIds)
+                    {
+                        var genre = _genreRepos.GetById(idGenre);
+                        if (genre != null)
+                        {
+                            listGenre.Add(genre);
+                        }
                     }
                 }
                 bookNow.Genres = listGenre;

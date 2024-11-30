@@ -2,6 +2,7 @@
 using BookData.Data.Entities;
 using BookData.Repositories;
 using BookData.Repositories.CommonRepos;
+using Microsoft.AspNetCore.Hosting;
 
 namespace BookApi.Services
 {
@@ -9,12 +10,15 @@ namespace BookApi.Services
     {
         private readonly IGenericRepository<Author> _authorCUDRepos;
         private readonly IAuthorRepos _authorReadRepos;
+        private readonly IWebHostEnvironment _evn;
 
         public AuthorService(IGenericRepository<Author> authorRepos,
-            IAuthorRepos authorReadRepos)
+            IAuthorRepos authorReadRepos,
+            IWebHostEnvironment evn)
         {
             _authorCUDRepos = authorRepos;
             _authorReadRepos = authorReadRepos;
+            _evn = evn;
         }
 
         public bool createAuthor(Author author)
@@ -29,6 +33,14 @@ namespace BookApi.Services
             var author = _authorReadRepos.getById(id);
             if (author != null)
             {
+                if (author.AuthorImage != null)
+                {
+                    string filePath = Path.Combine(_evn.WebRootPath, "AuthorImg", author.AuthorImage);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                }
                 _authorCUDRepos.Delete(author);
                 return _authorCUDRepos.Save();
             }

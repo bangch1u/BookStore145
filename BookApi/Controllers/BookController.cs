@@ -113,7 +113,7 @@ namespace BookApi.Controllers
 
         }
         [HttpPut("{id}")]
-        public IActionResult updateBook(Guid id, BookDto bookUpdate)
+        public IActionResult updateBook(Guid id,[FromForm] BookDto bookUpdate)
         {
             var bookNew = _service.updateBook(id, bookUpdate);
             return StatusCode(200, bookUpdate);
@@ -124,6 +124,7 @@ namespace BookApi.Controllers
         {
             if (_service.deleteBook(id))
             {
+                
                 return Ok();
             }
             return BadRequest();
