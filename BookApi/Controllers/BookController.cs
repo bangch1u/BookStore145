@@ -44,6 +44,28 @@ namespace BookApi.Controllers
             }
             return NotFound();
         }
+        [HttpGet("paged")]
+        public IActionResult getAllPagedList(int page)
+        {
+            var lstBook = _service.getAllPagedList(page);
+            if (lstBook != null)
+            {
+
+                var bookVM = lstBook.Select(x => new BookVM()
+                {
+                    BookId = x.BookId,
+                    BookName = x.BookTitle,
+                    BookPrices = x.Price,
+                    Stock = x.StockQuantity,
+                    UrlImage = x.CoverImage != null ? $"{Request.Scheme}://{Request.Host}/Uploads/{x.CoverImage}" : "N/A",
+                    AuthorNames = x.Authors != null && x.Authors.Count > 0 ? x.Authors.Select(a => a.AuthorName).ToList() : NA,
+                    PublicationYear = x.PublicationYear,
+                    Genres = x.Genres != null && x.Genres.Count > 0 ? x.Genres.Select(g => g.GenreName).ToList() : NA,
+                });
+                return Ok(bookVM);
+            }
+            return NotFound();
+        }
         [HttpGet("{id}")]
         public IActionResult getBook([FromRoute] Guid id)
         {

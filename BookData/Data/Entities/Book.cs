@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BookData.Data.Entities
@@ -21,6 +22,7 @@ namespace BookData.Data.Entities
         public ICollection<Author>? Authors { get; set; }
         //public ICollection<Publisher > Publishers { get; set; }
         public ICollection<Genre>? Genres { get; set; }
+        [JsonIgnore]
         public List<OrderDetail>? OrderDetails { get; set; }
     }
 }

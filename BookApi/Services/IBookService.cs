@@ -10,5 +10,7 @@ namespace BookApi.Services
         bool createBook(BookDto book);
         bool updateBook(Guid id, BookDto book);
         bool deleteBook(Guid id);
+
+        List<Book> getAllPagedList(int page = 1);
     }
 }

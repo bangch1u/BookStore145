@@ -7,66 +7,79 @@
         <div class="row"><p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit</p></div>
     </div>
 </div>
-<div class="row" style="height:900px; background-color:aquamarine; display: flex; justify-content: center; align-items: center;">
-    <div style="height:600px; width: 80%; background-color: antiquewhite;">
+<div class="row" style="height:600px; display: flex; justify-content: center; align-items: center;">
+    <div style="height:600px; width: 80%; display: flex; justify-content: center; align-items: center;">
         @if (Books == null)
         {
-            <div>Loading...</div>
+            <p>Loading...</p>
         }
         else
         {
-            <div class="row ms-5">
-                <table class="table">
-                    <thead>
-                        <tr class="row">
-                            <th class="col-1">BookId</th>
-                            <th class="col-2">BookName</th>
-                            <th class="col-1">Price</th>
-                            <th class="col-2">PublicationYear</th>
-                            <th class="col-1">Image</th>
-                            <th class="col-1">Author</th>
-                            <th class="col-1">Genre</th>
-                            <th class="col-3"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Books)
-                        {
-                            <tr class="row">
-                                <td class="col-1">@item.BookId</td>
-                                <td class="col-2">@item.BookName</td>
-                                <td class="col-1">@item.BookPrices</td>
-                                <td class="col-2">@item.PublicationYear</td>
-                                <td class="col-1"><img style="height:100px; width:60px" src="@item.UrlImage" alt="Alternate Text" /></td>
-                                <td class="col-1">@string.Join(", ", item.AuthorNames)</td>
-                                <td class="col-1">@string.Join(", ", item.Genres)</td>
-                                <td class="col-3">
-                                    <a class="btn btn-info " href="/bookDetail/@item.BookId"><i class="bi bi-info-square-fill"></i></a>
-                                    <a class="btn btn-warning" href="/book/update/@item.BookId">Update</a>
-                                    <button class="btn btn-danger"><i class="bi bi-trash-fill"></i></button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <div style="text-align: center;">
+                <ul style="list-style-type: none; padding: 0; margin: 0; display: flex; gap: 10px; justify-content: center;">
+                    @foreach (var item in Books)
+                    {
+                        <li class="mx-2">
+                            <div class="card border-0" style="width: 18rem;">                           
+                                <div class="card-body">
+                                    <img src="@item.UrlImage" alt="Book Image" width="200px" height="300px" />
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                    <button class="btn btn-primary" @onclick="() => AddToCart(item.BookId)">Buy</button>
+                                </div>
+                            </div>
+                            
+                        </li>
+                    }
+                </ul>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-info" @onclick="PreviousPage" disabled="@(_currentPage == 1)">Previous</button>
+                    <button class="btn btn-info" @onclick="NextPage">Next</button>
+                </div>
             </div>
         }
     </div>
+
+
 </div>
 
 @inject IBookApiClient _bookApiClient ;
-
+@inject IJSRuntime JSRuntime
+@inject NavigationManager nav
 @code{
-   
-    public List<BookVM> Books;
-    //[Parameter] public string id { get; set; }
+    private List<Guid> BookEntryIds { get; set; }
+    private List<BookVM> Books;
+    private int _currentPage = 1;
+
     protected override async Task OnInitializedAsync()
     {
-        Books = await _bookApiClient.getAllBook();
+        await LoadBooks();
     }
-    // private async Task RemoveBook(Guid id)
-    // {
-    //     await _bookApiClient.DeleteBook(id);
-    //     Books = await _bookApiClient.GetAllBook();
-    // }
+
+
+    private async Task LoadBooks()
+    {
+        Books = await _bookApiClient.getAllBook(_currentPage);
+    }
+
+    private async Task PreviousPage()
+    {
+        if (_currentPage > 1)
+        {
+            _currentPage--;
+            await LoadBooks();
+        }
+    }
+
+    private async Task NextPage()
+    {
+        _currentPage++;
+        await LoadBooks();
+    }
+    private async Task AddToCart(Guid bookId)
+    {
+        // Lưu vào SessionStorage
+        await JSRuntime.InvokeVoidAsync("sessionStorage.setItem", "BookEntryIds", bookId.ToString());
+        nav.NavigateTo($"/shoppingcart/{bookId}");
+    }
 }

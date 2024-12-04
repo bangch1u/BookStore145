@@ -20,6 +20,8 @@ builder.Services.AddScoped<IGenreRepos, GenreRepos>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IOrderRepos, OrderRepos>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddDbContext<BookDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddCors(options =>

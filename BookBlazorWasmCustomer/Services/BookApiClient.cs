@@ -14,9 +14,14 @@ namespace BookBlazorWasmCustomer.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<BookVM>> getAllBook()
+        public async Task<List<BookVM>> getAllBook(int page)
         {
-            return  await _httpClient.GetFromJsonAsync<List<BookVM>>(url);    
+            var response = await _httpClient.GetAsync($"api/books/paged?page={page}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<BookVM>>();
+            }
+            return new List<BookVM>();
         }
     }
 }

@@ -4,6 +4,6 @@ namespace BookBlazorWasmCustomer.Services
 {
     public interface IBookApiClient
     {
-        Task<List<BookVM>> getAllBook(); 
+        Task<List<BookVM>> getAllBook(int page); 
     }
 }

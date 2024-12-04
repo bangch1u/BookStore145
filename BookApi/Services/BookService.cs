@@ -2,6 +2,7 @@
 using BookData.DataTransferObjects;
 using BookData.Repositories;
 using BookData.Repositories.CommonRepos;
+using BookData.ViewModels;
 using System.Net;
 
 namespace BookApi.Services
@@ -25,7 +26,7 @@ namespace BookApi.Services
             _genreRepos = genreRepos;   
             _webHostEnvironment = webHostEnvironment;
         }
-
+        public static int PAGE_SIZE { get; set; } = 4;
         public bool createBook(BookDto book)
         {
             var bookNew = new Book()
@@ -84,6 +85,14 @@ namespace BookApi.Services
         public List<Book> getAll()
         {
             return _bookReadRepos.getAll();
+        }
+
+        public List<Book> getAllPagedList(int page = 1)
+        {
+            var allBook = _bookReadRepos.getAll();
+           
+            var result = PaginatedList<Book>.Create(allBook, page, PAGE_SIZE);
+            return result;
         }
 
         public Book getById(Guid id)
