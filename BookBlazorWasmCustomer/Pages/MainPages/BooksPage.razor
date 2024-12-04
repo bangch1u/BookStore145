@@ -1,0 +1,72 @@
+﻿@page "/books"
+@using BookBlazorWasmCustomer.Services
+@using BookData.ViewModels
+<div class="row" style="height: 400px; background-color: #FCEBE6; display: flex; justify-content: center; align-items: center;">
+    <div class="col-4" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div class="row"><h1>Books</h1></div>
+        <div class="row"><p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit</p></div>
+    </div>
+</div>
+<div class="row" style="height:900px; background-color:aquamarine; display: flex; justify-content: center; align-items: center;">
+    <div style="height:600px; width: 80%; background-color: antiquewhite;">
+        @if (Books == null)
+        {
+            <div>Loading...</div>
+        }
+        else
+        {
+            <div class="row ms-5">
+                <table class="table">
+                    <thead>
+                        <tr class="row">
+                            <th class="col-1">BookId</th>
+                            <th class="col-2">BookName</th>
+                            <th class="col-1">Price</th>
+                            <th class="col-2">PublicationYear</th>
+                            <th class="col-1">Image</th>
+                            <th class="col-1">Author</th>
+                            <th class="col-1">Genre</th>
+                            <th class="col-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Books)
+                        {
+                            <tr class="row">
+                                <td class="col-1">@item.BookId</td>
+                                <td class="col-2">@item.BookName</td>
+                                <td class="col-1">@item.BookPrices</td>
+                                <td class="col-2">@item.PublicationYear</td>
+                                <td class="col-1"><img style="height:100px; width:60px" src="@item.UrlImage" alt="Alternate Text" /></td>
+                                <td class="col-1">@string.Join(", ", item.AuthorNames)</td>
+                                <td class="col-1">@string.Join(", ", item.Genres)</td>
+                                <td class="col-3">
+                                    <a class="btn btn-info " href="/bookDetail/@item.BookId"><i class="bi bi-info-square-fill"></i></a>
+                                    <a class="btn btn-warning" href="/book/update/@item.BookId">Update</a>
+                                    <button class="btn btn-danger"><i class="bi bi-trash-fill"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@inject IBookApiClient _bookApiClient ;
+
+@code{
+   
+    public List<BookVM> Books;
+    //[Parameter] public string id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Books = await _bookApiClient.getAllBook();
+    }
+    // private async Task RemoveBook(Guid id)
+    // {
+    //     await _bookApiClient.DeleteBook(id);
+    //     Books = await _bookApiClient.GetAllBook();
+    // }
+}
