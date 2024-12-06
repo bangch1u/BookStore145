@@ -24,7 +24,7 @@
                                 <div class="card-body">
                                     <img src="@item.UrlImage" alt="Book Image" width="200px" height="300px" />
                                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <button class="btn btn-primary" @onclick="() => AddToCart(item.BookId)">Buy</button>
+                                    <button class="btn btn-primary">Buy</button>
                                 </div>
                             </div>
                             
@@ -44,7 +44,7 @@
 </div>
 
 @inject IBookApiClient _bookApiClient ;
-@inject IJSRuntime JSRuntime
+
 @inject NavigationManager nav
 @code{
     private List<Guid> BookEntryIds { get; set; }
@@ -75,11 +75,5 @@
     {
         _currentPage++;
         await LoadBooks();
-    }
-    private async Task AddToCart(Guid bookId)
-    {
-        // Lưu vào SessionStorage
-        await JSRuntime.InvokeVoidAsync("sessionStorage.setItem", "BookEntryIds", bookId.ToString());
-        nav.NavigateTo($"/shoppingcart/{bookId}");
     }
 }

@@ -4,26 +4,7 @@
     [Parameter] public Guid BookId { get; set; }
     public List<Guid> BookEntryIds { get; set; } = new List<Guid>();
 
-    protected override async Task OnInitializedAsync()
-    {
-        // Lấy dữ liệu từ SessionStorage
-        var storedIds = await JSRuntime.InvokeAsync<string>("sessionStorage.getItem", "BookEntryIds");
-        if (!string.IsNullOrEmpty(storedIds))
-        {
-            BookEntryIds = storedIds.Split(',')
-                                    .Select(id => Guid.Parse(id))
-                                    .ToList();
-        }
-
-        // Thêm BookId hiện tại
-        if (BookId != Guid.Empty && !BookEntryIds.Contains(BookId))
-        {
-            BookEntryIds.Add(BookId);
-
-            // Cập nhật lại vào SessionStorage
-            await JSRuntime.InvokeVoidAsync("sessionStorage.setItem", "BookEntryIds", string.Join(",", BookEntryIds));
-        }
-    }
+    
 
     public void Test()
     {
