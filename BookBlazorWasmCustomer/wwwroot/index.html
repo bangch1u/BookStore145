@@ -12,7 +12,7 @@
     <link href="BookBlazorWasmCustomer.styles.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
-  
+
 
 
 </head>
@@ -61,4 +61,21 @@
     </footer>
 </body>
 
+
 </html>
+<script>
+    window.sessionStorageHelper = {
+        setItem: function (key, value) {
+            sessionStorage.setItem(key, value);
+        },
+        getItem: function (key) {
+            return sessionStorage.getItem(key);
+        },
+        removeItem: function (key) {
+            sessionStorage.removeItem(key);
+        },
+        clear: function () {
+            sessionStorage.clear();
+        }
+    };
+</script>

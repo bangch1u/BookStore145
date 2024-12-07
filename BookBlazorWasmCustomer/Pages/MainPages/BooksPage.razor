@@ -24,7 +24,7 @@
                                 <div class="card-body">
                                     <img src="@item.UrlImage" alt="Book Image" width="200px" height="300px" />
                                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <button class="btn btn-primary">Buy</button>
+                                    <a href="/shoppingcart" class="btn btn-primary" @onclick="() => AddToBookEntryIds(item.BookId)">Buy</a>
                                 </div>
                             </div>
                             
@@ -44,10 +44,11 @@
 </div>
 
 @inject IBookApiClient _bookApiClient ;
-
+@inject BookEntryService BookEntryService;
 @inject NavigationManager nav
 @code{
-    private List<Guid> BookEntryIds { get; set; }
+   
+
     private List<BookVM> Books;
     private int _currentPage = 1;
 
@@ -75,5 +76,9 @@
     {
         _currentPage++;
         await LoadBooks();
+    }
+    private void AddToBookEntryIds(Guid bookId)
+    {
+        BookEntryService.AddBookEntry(bookId);
     }
 }
