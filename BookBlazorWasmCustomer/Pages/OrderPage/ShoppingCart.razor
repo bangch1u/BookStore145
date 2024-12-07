@@ -1,14 +1,14 @@
 ﻿@page "/shoppingcart"
 @using BookBlazorWasmCustomer.Services
 @inject BookEntryService BookEntryService;
-
+@inject IOrderApiClient _apiClient;
 @code {
     [Parameter] public Guid BookId { get; set; }
     public List<Guid> BookEntryIds { get; set; } = new List<Guid>();
 
     public void IncreaseQuantity(Guid bookEntryId)
     {
-        var bookEntry = BookEntryService.BookEntrys.FirstOrDefault(be => be.BookEntryId == bookEntryId);
+        var bookEntry = BookEntryService.BookEntrys.FirstOrDefault(be => be.BookId == bookEntryId);
         if (bookEntry != null)
         {
             bookEntry.Quantity++;
@@ -17,7 +17,7 @@
 
     public void DecreaseQuantity(Guid bookEntryId)
     {
-        var bookEntry = BookEntryService.BookEntrys.FirstOrDefault(be => be.BookEntryId == bookEntryId);
+        var bookEntry = BookEntryService.BookEntrys.FirstOrDefault(be => be.BookId == bookEntryId);
         if (bookEntry != null && bookEntry.Quantity > 0) // Đảm bảo không giảm dưới 0
         {
             bookEntry.Quantity--;
@@ -27,9 +27,19 @@
     {
         foreach (var item in BookEntryService.BookEntrys)
         {
-            Console.WriteLine($"{item.BookEntryId} + {item.Quantity}");
+            Console.WriteLine($"{item.BookId} + {item.Quantity}");
         }
-      
+
+    }
+    public async Task HandleOrder()
+    {
+        await _apiClient.CreateOrder(BookEntryService.BookEntrys);
+
+        // foreach (var item in BookEntryService.BookEntrys)
+        // {
+        //     Console.WriteLine(item.BookId);
+        //     Console.WriteLine(item.Quantity);
+        // }
     }
 }
 
@@ -54,11 +64,11 @@
                     @foreach (var item in BookEntryService.BookEntrys)
                     {
                         <tr>
-                            <td>@item.BookEntryId</td>
+                            <td>@item.BookId</td>
                             <td>@item.Quantity</td>
                             <td>
-                                <button class="btn btn-success" @onclick="() => IncreaseQuantity(item.BookEntryId)">+</button>
-                                <button class="btn btn-danger" @onclick="() => DecreaseQuantity(item.BookEntryId)">-</button>
+                                <button class="btn btn-success" @onclick="() => IncreaseQuantity(item.BookId)">+</button>
+                                <button class="btn btn-danger" @onclick="() => DecreaseQuantity(item.BookId)">-</button>
                             </td>
                         </tr>
                     }
@@ -69,6 +79,7 @@
 </div>
 
 <button class="btn btn-danger" onclick="@Test">test</button>
+<button class="btn btn-danger" onclick="@HandleOrder">Order</button>
 @* <table>
     <tr class="row m-0">
         <td class="col-2">

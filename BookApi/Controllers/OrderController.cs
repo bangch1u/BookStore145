@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookApi.Controllers
 {
-    [Route("api/oders")]
+    [Route("api/orders")]
     [ApiController]
     public class OrderController : ControllerBase
     {
@@ -21,14 +21,24 @@ namespace BookApi.Controllers
             return Ok(_service.GetAllOrder());
         }
         [HttpPost]
-        public IActionResult CreateOrder(List<BookEntryDto> bookIds)
+        public IActionResult CreateOrder([FromBody]List<BookEntryDto> bookIds)
         {
-            var result = _service.Create(bookIds);
-            if (result == true)
+           
+            if (bookIds == null || !bookIds.Any())
             {
-                return Ok(result);
+                return BadRequest("Danh sách rỗng hoặc không hợp lệ.");
             }
-            return BadRequest(result);
+
+            var result = _service.Create(bookIds);
+            if (result)
+            {
+                return Ok("Đặt hàng thành công.");
+            }
+            else
+            {
+                return BadRequest("Đặt hàng thất bại.");
+            }
+
         }
     }
 }

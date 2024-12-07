@@ -1,30 +1,25 @@
-﻿namespace BookBlazorWasmCustomer.Services
+﻿using BookData.DataTransferObjects;
+
+namespace BookBlazorWasmCustomer.Services
 {
     public class BookEntryService
     {
       
        
-        public List<BookEntry> BookEntrys { get; private set; } = new List<BookEntry>();
+        public List<BookEntryDto> BookEntrys { get; private set; } = new List<BookEntryDto>();
 
         public void AddBookEntry(Guid bookId)
         {
-           var bookEntryNew = new BookEntry();
-           bookEntryNew.BookEntryId = bookId;
+           var bookEntryNew = new BookEntryDto();
+           bookEntryNew.BookId = bookId;
             BookEntrys.Add(bookEntryNew);   
-
-
         }
-
-    }
-    public class BookEntry
-    {
-        public Guid BookEntryId { get; set; }
-        public int Quantity { get; set; }
-
-        public BookEntry()
+        public void RemoveBookEntrys()
         {
-              Quantity = 0;
+            BookEntrys.Clear();
         }
+
     }
+   
 
 }

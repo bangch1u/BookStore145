@@ -12,5 +12,5 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7177") });
 builder.Services.AddScoped<IBookApiClient, BookApiClient>();
 builder.Services.AddSingleton<BookEntryService>();
-
+builder.Services.AddScoped<IOrderApiClient, OrderApiClient>();
 await builder.Build().RunAsync();

@@ -10,5 +10,9 @@ namespace BookData.DataTransferObjects
     {
         public Guid BookId { get; set; }
         public int Quantity { get; set; }
+        public BookEntryDto()
+        {
+            Quantity = 0;    
+        }
     }
 }

@@ -24,6 +24,7 @@
                                 <div class="card-body">
                                     <img src="@item.UrlImage" alt="Book Image" width="200px" height="300px" />
                                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                    <p class="card-text">Số lượng: @item.Stock</p>
                                     <a href="/shoppingcart" class="btn btn-primary" @onclick="() => AddToBookEntryIds(item.BookId)">Buy</a>
                                 </div>
                             </div>
